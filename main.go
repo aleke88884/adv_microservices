@@ -29,7 +29,9 @@ func main() {
 
 	if err := appointmentCmd.Start(); err != nil {
 		fmt.Printf("Failed to start Appointment Service: %v\n", err)
-		doctorCmd.Process.Kill()
+
+		_ = doctorCmd.Process.Signal(syscall.SIGTERM)
+
 		return
 	}
 
@@ -39,7 +41,7 @@ func main() {
 	<-sigChan
 
 	fmt.Println("\nShutting down services...")
-	doctorCmd.Process.Kill()
-	appointmentCmd.Process.Kill()
+	_ = doctorCmd.Process.Signal(syscall.SIGTERM)
+	_ = appointmentCmd.Process.Signal(syscall.SIGTERM)
 	fmt.Println("Services stopped")
 }
