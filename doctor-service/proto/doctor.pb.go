@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.34.1
-// source: proto/doctor.proto
+// source: doctor-service/proto/doctor.proto
 
 package doctorpb
 
@@ -32,7 +32,7 @@ type CreateDoctorRequest struct {
 
 func (x *CreateDoctorRequest) Reset() {
 	*x = CreateDoctorRequest{}
-	mi := &file_proto_doctor_proto_msgTypes[0]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *CreateDoctorRequest) String() string {
 func (*CreateDoctorRequest) ProtoMessage() {}
 
 func (x *CreateDoctorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_doctor_proto_msgTypes[0]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *CreateDoctorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateDoctorRequest.ProtoReflect.Descriptor instead.
 func (*CreateDoctorRequest) Descriptor() ([]byte, []int) {
-	return file_proto_doctor_proto_rawDescGZIP(), []int{0}
+	return file_doctor_service_proto_doctor_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CreateDoctorRequest) GetFullName() string {
@@ -90,7 +90,7 @@ type GetDoctorRequest struct {
 
 func (x *GetDoctorRequest) Reset() {
 	*x = GetDoctorRequest{}
-	mi := &file_proto_doctor_proto_msgTypes[1]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -102,7 +102,7 @@ func (x *GetDoctorRequest) String() string {
 func (*GetDoctorRequest) ProtoMessage() {}
 
 func (x *GetDoctorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_doctor_proto_msgTypes[1]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -115,7 +115,7 @@ func (x *GetDoctorRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDoctorRequest.ProtoReflect.Descriptor instead.
 func (*GetDoctorRequest) Descriptor() ([]byte, []int) {
-	return file_proto_doctor_proto_rawDescGZIP(), []int{1}
+	return file_doctor_service_proto_doctor_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetDoctorRequest) GetId() string {
@@ -133,7 +133,7 @@ type ListDoctorsRequest struct {
 
 func (x *ListDoctorsRequest) Reset() {
 	*x = ListDoctorsRequest{}
-	mi := &file_proto_doctor_proto_msgTypes[2]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -145,7 +145,7 @@ func (x *ListDoctorsRequest) String() string {
 func (*ListDoctorsRequest) ProtoMessage() {}
 
 func (x *ListDoctorsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_doctor_proto_msgTypes[2]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -158,7 +158,7 @@ func (x *ListDoctorsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDoctorsRequest.ProtoReflect.Descriptor instead.
 func (*ListDoctorsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_doctor_proto_rawDescGZIP(), []int{2}
+	return file_doctor_service_proto_doctor_proto_rawDescGZIP(), []int{2}
 }
 
 type DoctorResponse struct {
@@ -173,7 +173,7 @@ type DoctorResponse struct {
 
 func (x *DoctorResponse) Reset() {
 	*x = DoctorResponse{}
-	mi := &file_proto_doctor_proto_msgTypes[3]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -185,7 +185,7 @@ func (x *DoctorResponse) String() string {
 func (*DoctorResponse) ProtoMessage() {}
 
 func (x *DoctorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_doctor_proto_msgTypes[3]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -198,7 +198,7 @@ func (x *DoctorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DoctorResponse.ProtoReflect.Descriptor instead.
 func (*DoctorResponse) Descriptor() ([]byte, []int) {
-	return file_proto_doctor_proto_rawDescGZIP(), []int{3}
+	return file_doctor_service_proto_doctor_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DoctorResponse) GetId() string {
@@ -238,7 +238,7 @@ type ListDoctorsResponse struct {
 
 func (x *ListDoctorsResponse) Reset() {
 	*x = ListDoctorsResponse{}
-	mi := &file_proto_doctor_proto_msgTypes[4]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -250,7 +250,7 @@ func (x *ListDoctorsResponse) String() string {
 func (*ListDoctorsResponse) ProtoMessage() {}
 
 func (x *ListDoctorsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_doctor_proto_msgTypes[4]
+	mi := &file_doctor_service_proto_doctor_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -263,7 +263,7 @@ func (x *ListDoctorsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDoctorsResponse.ProtoReflect.Descriptor instead.
 func (*ListDoctorsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_doctor_proto_rawDescGZIP(), []int{4}
+	return file_doctor_service_proto_doctor_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListDoctorsResponse) GetDoctors() []*DoctorResponse {
@@ -273,11 +273,11 @@ func (x *ListDoctorsResponse) GetDoctors() []*DoctorResponse {
 	return nil
 }
 
-var File_proto_doctor_proto protoreflect.FileDescriptor
+var File_doctor_service_proto_doctor_proto protoreflect.FileDescriptor
 
-const file_proto_doctor_proto_rawDesc = "" +
+const file_doctor_service_proto_doctor_proto_rawDesc = "" +
 	"\n" +
-	"\x12proto/doctor.proto\x12\x06doctor\"p\n" +
+	"!doctor-service/proto/doctor.proto\x12\x06doctor\"p\n" +
 	"\x13CreateDoctorRequest\x12\x1b\n" +
 	"\tfull_name\x18\x01 \x01(\tR\bfullName\x12&\n" +
 	"\x0especialization\x18\x02 \x01(\tR\x0especialization\x12\x14\n" +
@@ -298,26 +298,26 @@ const file_proto_doctor_proto_rawDesc = "" +
 	"\vListDoctors\x12\x1a.doctor.ListDoctorsRequest\x1a\x1b.doctor.ListDoctorsResponseB\x1fZ\x1ddoctor-service/proto;doctorpbb\x06proto3"
 
 var (
-	file_proto_doctor_proto_rawDescOnce sync.Once
-	file_proto_doctor_proto_rawDescData []byte
+	file_doctor_service_proto_doctor_proto_rawDescOnce sync.Once
+	file_doctor_service_proto_doctor_proto_rawDescData []byte
 )
 
-func file_proto_doctor_proto_rawDescGZIP() []byte {
-	file_proto_doctor_proto_rawDescOnce.Do(func() {
-		file_proto_doctor_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_doctor_proto_rawDesc), len(file_proto_doctor_proto_rawDesc)))
+func file_doctor_service_proto_doctor_proto_rawDescGZIP() []byte {
+	file_doctor_service_proto_doctor_proto_rawDescOnce.Do(func() {
+		file_doctor_service_proto_doctor_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_doctor_service_proto_doctor_proto_rawDesc), len(file_doctor_service_proto_doctor_proto_rawDesc)))
 	})
-	return file_proto_doctor_proto_rawDescData
+	return file_doctor_service_proto_doctor_proto_rawDescData
 }
 
-var file_proto_doctor_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_proto_doctor_proto_goTypes = []any{
+var file_doctor_service_proto_doctor_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_doctor_service_proto_doctor_proto_goTypes = []any{
 	(*CreateDoctorRequest)(nil), // 0: doctor.CreateDoctorRequest
 	(*GetDoctorRequest)(nil),    // 1: doctor.GetDoctorRequest
 	(*ListDoctorsRequest)(nil),  // 2: doctor.ListDoctorsRequest
 	(*DoctorResponse)(nil),      // 3: doctor.DoctorResponse
 	(*ListDoctorsResponse)(nil), // 4: doctor.ListDoctorsResponse
 }
-var file_proto_doctor_proto_depIdxs = []int32{
+var file_doctor_service_proto_doctor_proto_depIdxs = []int32{
 	3, // 0: doctor.ListDoctorsResponse.doctors:type_name -> doctor.DoctorResponse
 	0, // 1: doctor.DoctorService.CreateDoctor:input_type -> doctor.CreateDoctorRequest
 	1, // 2: doctor.DoctorService.GetDoctor:input_type -> doctor.GetDoctorRequest
@@ -332,26 +332,26 @@ var file_proto_doctor_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_proto_doctor_proto_init() }
-func file_proto_doctor_proto_init() {
-	if File_proto_doctor_proto != nil {
+func init() { file_doctor_service_proto_doctor_proto_init() }
+func file_doctor_service_proto_doctor_proto_init() {
+	if File_doctor_service_proto_doctor_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_doctor_proto_rawDesc), len(file_proto_doctor_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_doctor_service_proto_doctor_proto_rawDesc), len(file_doctor_service_proto_doctor_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_doctor_proto_goTypes,
-		DependencyIndexes: file_proto_doctor_proto_depIdxs,
-		MessageInfos:      file_proto_doctor_proto_msgTypes,
+		GoTypes:           file_doctor_service_proto_doctor_proto_goTypes,
+		DependencyIndexes: file_doctor_service_proto_doctor_proto_depIdxs,
+		MessageInfos:      file_doctor_service_proto_doctor_proto_msgTypes,
 	}.Build()
-	File_proto_doctor_proto = out.File
-	file_proto_doctor_proto_goTypes = nil
-	file_proto_doctor_proto_depIdxs = nil
+	File_doctor_service_proto_doctor_proto = out.File
+	file_doctor_service_proto_doctor_proto_goTypes = nil
+	file_doctor_service_proto_doctor_proto_depIdxs = nil
 }

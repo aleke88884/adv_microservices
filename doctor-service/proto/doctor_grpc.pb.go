@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v7.34.1
-// source: proto/doctor.proto
+// source: doctor-service/proto/doctor.proto
 
 package doctorpb
 
@@ -193,5 +193,5 @@ var DoctorService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/doctor.proto",
+	Metadata: "doctor-service/proto/doctor.proto",
 }

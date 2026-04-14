@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v7.34.1
-// source: proto/appointment.proto
+// source: appointment-service/proto/appointment.proto
 
 package appointmentpb
 
@@ -231,5 +231,5 @@ var AppointmentService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/appointment.proto",
+	Metadata: "appointment-service/proto/appointment.proto",
 }
