@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-	fmt.Println("Starting Medical Scheduling Platform...")
-	fmt.Println("Doctor Service: http://localhost:8080")
-	fmt.Println("Appointment Service: http://localhost:8081")
+	fmt.Println("Starting Medical Scheduling Platform (gRPC)...")
+	fmt.Println("Doctor Service gRPC:      localhost:50051")
+	fmt.Println("Appointment Service gRPC: localhost:50052")
 	fmt.Println("\nPress Ctrl+C to stop all services\n")
 
 	doctorCmd := exec.Command("go", "run", "./doctor-service/cmd/doctor-service/main.go")

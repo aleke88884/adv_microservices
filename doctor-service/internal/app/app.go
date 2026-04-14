@@ -2,23 +2,32 @@ package app
 
 import (
 	"doctor-service/internal/repository"
-	transporthttp "doctor-service/internal/transport/http"
+	transportgrpc "doctor-service/internal/transport/grpc"
 	"doctor-service/internal/usecase"
+	pb "doctor-service/proto"
 	"log"
+	"net"
 
-	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func Run(port string) {
 	repo := repository.NewInMemoryDoctorRepository()
 	uc := usecase.NewDoctorUseCase(repo)
-	handler := transporthttp.NewDoctorHandler(uc)
+	server := transportgrpc.NewDoctorServer(uc)
 
-	router := gin.Default()
-	handler.RegisterRoutes(router)
+	lis, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Fatalf("Failed to listen on port %s: %v", port, err)
+	}
 
-	log.Printf("Doctor Service starting on port %s", port)
-	if err := router.Run(":" + port); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+	grpcServer := grpc.NewServer()
+	pb.RegisterDoctorServiceServer(grpcServer, server)
+	reflection.Register(grpcServer)
+
+	log.Printf("Doctor Service gRPC starting on port %s", port)
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
 	}
 }

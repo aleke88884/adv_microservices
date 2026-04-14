@@ -1,59 +1,50 @@
 package client
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"net/http"
+	"context"
+	doctorpb "doctor-service/proto"
 	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 )
 
 type DoctorClient interface {
 	DoctorExists(doctorID string) (bool, error)
 }
 
-type HTTPDoctorClient struct {
-	baseURL    string
-	httpClient *http.Client
+type GRPCDoctorClient struct {
+	client doctorpb.DoctorServiceClient
 }
 
-func NewHTTPDoctorClient(baseURL string) *HTTPDoctorClient {
-	return &HTTPDoctorClient{
-		baseURL: baseURL,
-		httpClient: &http.Client{
-			Timeout: 5 * time.Second,
-		},
-	}
-}
-
-type DoctorResponse struct {
-	ID             string `json:"id"`
-	FullName       string `json:"full_name"`
-	Specialization string `json:"specialization"`
-	Email          string `json:"email"`
-}
-
-func (c *HTTPDoctorClient) DoctorExists(doctorID string) (bool, error) {
-	url := fmt.Sprintf("%s/doctors/%s", c.baseURL, doctorID)
-
-	resp, err := c.httpClient.Get(url)
+func NewGRPCDoctorClient(addr string) (*GRPCDoctorClient, error) {
+	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return false, fmt.Errorf("failed to call doctor service: %w", err)
+		return nil, err
 	}
-	defer resp.Body.Close()
+	return &GRPCDoctorClient{
+		client: doctorpb.NewDoctorServiceClient(conn),
+	}, nil
+}
 
-	if resp.StatusCode == http.StatusNotFound {
-		return false, nil
+func (c *GRPCDoctorClient) DoctorExists(doctorID string) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := c.client.GetDoctor(ctx, &doctorpb.GetDoctorRequest{Id: doctorID})
+	if err != nil {
+		st, ok := status.FromError(err)
+		if ok {
+			if st.Code() == codes.NotFound {
+				return false, nil
+			}
+			if st.Code() == codes.Unavailable {
+				return false, err
+			}
+		}
+		return false, err
 	}
-
-	if resp.StatusCode != http.StatusOK {
-		return false, errors.New("doctor service returned unexpected status")
-	}
-
-	var doctor DoctorResponse
-	if err := json.NewDecoder(resp.Body).Decode(&doctor); err != nil {
-		return false, fmt.Errorf("failed to decode doctor response: %w", err)
-	}
-
 	return true, nil
 }

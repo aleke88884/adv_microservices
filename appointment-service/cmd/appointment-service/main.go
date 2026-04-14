@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	app.Run("8081", "http://localhost:8080")
+	app.Run("50052", "localhost:50051")
 }

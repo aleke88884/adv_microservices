@@ -3,24 +3,38 @@ package app
 import (
 	"appointment-service/internal/client"
 	"appointment-service/internal/repository"
-	transporthttp "appointment-service/internal/transport/http"
+	transportgrpc "appointment-service/internal/transport/grpc"
 	"appointment-service/internal/usecase"
+	pb "appointment-service/proto"
 	"log"
+	"net"
 
-	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
-func Run(port string, doctorServiceURL string) {
+func Run(port string, doctorServiceAddr string) {
 	repo := repository.NewInMemoryAppointmentRepository()
-	doctorClient := client.NewHTTPDoctorClient(doctorServiceURL)
+
+	doctorClient, err := client.NewGRPCDoctorClient(doctorServiceAddr)
+	if err != nil {
+		log.Fatalf("Failed to connect to Doctor Service at %s: %v", doctorServiceAddr, err)
+	}
+
 	uc := usecase.NewAppointmentUseCase(repo, doctorClient)
-	handler := transporthttp.NewAppointmentHandler(uc)
+	server := transportgrpc.NewAppointmentServer(uc)
 
-	router := gin.Default()
-	handler.RegisterRoutes(router)
+	lis, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Fatalf("Failed to listen on port %s: %v", port, err)
+	}
 
-	log.Printf("Appointment Service starting on port %s", port)
-	if err := router.Run(":" + port); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+	grpcServer := grpc.NewServer()
+	pb.RegisterAppointmentServiceServer(grpcServer, server)
+	reflection.Register(grpcServer)
+
+	log.Printf("Appointment Service gRPC starting on port %s", port)
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
 	}
 }
