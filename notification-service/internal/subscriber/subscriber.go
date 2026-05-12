@@ -1,19 +1,17 @@
 package subscriber
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"log"
+	"notification-service/internal/jobqueue"
+	"notification-service/internal/logger"
 	"time"
 
 	nats "github.com/nats-io/nats.go"
 )
-
-// logLine is the structured log record printed to stdout for every received event.
-type logLine struct {
-	Time    string          `json:"time"`
-	Subject string          `json:"subject"`
-	Event   json.RawMessage `json:"event"`
-}
 
 // subjects the Notification Service subscribes to.
 var subjects = []string{
@@ -22,9 +20,18 @@ var subjects = []string{
 	"appointments.status_updated",
 }
 
+// statusUpdatedPayload is used to parse appointments.status_updated events.
+type statusUpdatedPayload struct {
+	EventType  string `json:"event_type"`
+	OccurredAt string `json:"occurred_at"`
+	ID         string `json:"id"`
+	DoctorID   string `json:"doctor_id"`
+	OldStatus  string `json:"old_status"`
+	NewStatus  string `json:"new_status"`
+}
+
 // Connect establishes a NATS connection with exponential backoff.
 // It retries up to maxAttempts times (delays: 1s, 2s, 4s, 8s, …).
-// Returns an error if all attempts are exhausted.
 func Connect(url string, maxAttempts int) (*nats.Conn, error) {
 	delay := time.Second
 	var lastErr error
@@ -43,15 +50,15 @@ func Connect(url string, maxAttempts int) (*nats.Conn, error) {
 	return nil, lastErr
 }
 
-// Subscribe registers message handlers for all three subjects.
-// Each received message is deserialized and logged as a single JSON line to stdout.
-// Returns the slice of active subscriptions so the caller can unsubscribe on shutdown.
-func Subscribe(nc *nats.Conn) ([]*nats.Subscription, error) {
+// Subscribe registers message handlers for all subjects.
+// queue is optional: if non-nil, appointments.status_updated events with
+// new_status="done" are forwarded to the job queue.
+func Subscribe(nc *nats.Conn, queue *jobqueue.Queue) ([]*nats.Subscription, error) {
 	var subs []*nats.Subscription
 	for _, subject := range subjects {
 		sub := subject // capture for closure
 		s, err := nc.Subscribe(sub, func(msg *nats.Msg) {
-			handleMessage(sub, msg.Data)
+			handleMessage(sub, msg.Data, queue)
 		})
 		if err != nil {
 			return subs, err
@@ -62,27 +69,47 @@ func Subscribe(nc *nats.Conn) ([]*nats.Subscription, error) {
 	return subs, nil
 }
 
-// handleMessage deserialises the raw JSON payload and prints one log line to stdout.
-func handleMessage(subject string, data []byte) {
-	// Validate that the payload is valid JSON; log an error if not.
+// handleMessage logs the event and, for status_updated=done events, enqueues a job.
+func handleMessage(subject string, data []byte, queue *jobqueue.Queue) {
 	if !json.Valid(data) {
 		log.Printf("notification-service: ERROR received invalid JSON on subject %q: %s", subject, data)
 		return
 	}
 
-	line := logLine{
-		Time:    time.Now().UTC().Format(time.RFC3339),
-		Subject: subject,
-		Event:   json.RawMessage(data),
-	}
+	// Log the event (unchanged from Assignment 3).
+	logger.LogEvent(subject, json.RawMessage(data))
 
-	out, err := json.Marshal(line)
-	if err != nil {
-		log.Printf("notification-service: ERROR marshalling log line for subject %q: %v", subject, err)
-		return
+	// Trigger job queue only for appointments.status_updated with new_status="done".
+	if subject == "appointments.status_updated" && queue != nil {
+		var evt statusUpdatedPayload
+		if err := json.Unmarshal(data, &evt); err != nil {
+			log.Printf("notification-service: ERROR parsing status_updated payload: %v", err)
+			return
+		}
+		if evt.NewStatus == "done" {
+			job := buildJob(evt)
+			queue.Enqueue(job)
+		}
 	}
+}
 
-	// Single JSON line written to stdout — this is the required output.
-	log.SetFlags(0) // remove timestamps from the standard logger for clean output
-	log.Println(string(out))
+// buildJob constructs a Job from the status_updated event payload.
+func buildJob(evt statusUpdatedPayload) jobqueue.Job {
+	idemKey := computeIdempotencyKey(evt.EventType, evt.ID, evt.OccurredAt)
+	return jobqueue.Job{
+		IdempotencyKey: idemKey,
+		AppointmentID:  evt.ID,
+		DoctorID:       evt.DoctorID,
+		OccurredAt:     evt.OccurredAt,
+		Channel:        "email",
+		Recipient:      "patient@clinic.kz",
+		Message: fmt.Sprintf("Your appointment %s with doctor %s is complete.",
+			evt.ID, evt.DoctorID),
+	}
+}
+
+// computeIdempotencyKey returns the SHA-256 hex of event_type + id + occurred_at.
+func computeIdempotencyKey(eventType, id, occurredAt string) string {
+	h := sha256.Sum256([]byte(eventType + id + occurredAt))
+	return hex.EncodeToString(h[:])
 }

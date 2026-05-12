@@ -27,6 +27,7 @@ type appointmentStatusUpdatedEvent struct {
 	EventType  string `json:"event_type"`
 	OccurredAt string `json:"occurred_at"`
 	ID         string `json:"id"`
+	DoctorID   string `json:"doctor_id"`
 	OldStatus  string `json:"old_status"`
 	NewStatus  string `json:"new_status"`
 }
@@ -134,6 +135,7 @@ func (uc *AppointmentUseCase) UpdateAppointmentStatus(id string, newStatus model
 		EventType:  "appointments.status_updated",
 		OccurredAt: time.Now().UTC().Format(time.RFC3339),
 		ID:         appointment.ID,
+		DoctorID:   appointment.DoctorID,
 		OldStatus:  string(oldStatus),
 		NewStatus:  string(newStatus),
 	}
