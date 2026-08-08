@@ -29,17 +29,48 @@ func main() {
 
 	if err := appointmentCmd.Start(); err != nil {
 		fmt.Printf("Failed to start Appointment Service: %v\n", err)
-		doctorCmd.Process.Kill()
+
+		_ = doctorCmd.Process.Signal(syscall.SIGTERM)
+
 		return
 	}
 
+	waitErrCh := make(chan error, 2)
+
+	go func() {
+		if err := doctorCmd.Wait(); err != nil {
+			waitErrCh <- fmt.Errorf("doctor service exited with error: %w", err)
+			return
+		}
+		waitErrCh <- fmt.Errorf("doctor service stopped")
+	}()
+
+	go func() {
+		if err := appointmentCmd.Wait(); err != nil {
+			waitErrCh <- fmt.Errorf("appointment service exited with error: %w", err)
+			return
+		}
+		waitErrCh <- fmt.Errorf("appointment service stopped")
+	}()
+
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+	
+	select {
+	case sig := <-sigChan:
+		fmt.Printf("\nReceived signal: %v\n", sig)
+		fmt.Println("Shutting down services...")
+		_ = doctorCmd.Process.Signal(syscall.SIGTERM)
+		_ = appointmentCmd.Process.Signal(syscall.SIGTERM)
 
-	<-sigChan
+		// optional: wait for both goroutines to report process exit
+		for i := 0; i < 2; i++ {
+			fmt.Println(<-waitErrCh)
+		}
 
-	fmt.Println("\nShutting down services...")
-	doctorCmd.Process.Kill()
-	appointmentCmd.Process.Kill()
+	case err := <-waitErrCh:
+		fmt.Printf("\nProcess finished: %v\n", err)
+	}
+
 	fmt.Println("Services stopped")
 }
